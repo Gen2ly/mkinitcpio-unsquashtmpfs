@@ -30,8 +30,8 @@ mount_handler_unsqaushtmpfs () {
     # SquashFS image existence test
     squashrootpath="$device_mp"/"${squashimgpath##*:}"
     if [ ! -f "$squashrootpath" ]; then
-        err  "SquashFS image not found: "$squashrootpath"."
-        echo "path= define correctly to continue."
+        err  "SquashFS image not found: "$path"."
+        echo "squashimgpath= define correctly to continue."
         launch_interactive_shell
         msg  "Trying to continue..."
     fi
