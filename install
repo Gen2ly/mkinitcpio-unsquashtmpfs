@@ -7,7 +7,7 @@ build() {
 help() {
 	cat <<EOF
 ==> Help for hook unsquashtmpfs
-This hook decompresses a squashfs image and mounts it to a tmpfs filesystem (i.e. memory) at rootfs /mnt/tmpsquash.  It adds and requires these kernel parameters (kernel device name, LABEL, or UUID can be used):
+This hook decompresses a gzipped, squashfs image and mounts it to a tmpfs filesystem (i.e. memory) at rootfs /mnt/tmpsquash.  It adds and requires these kernel parameters (kernel device name, LABEL, or UUID can be used):
 
  squashimgpath=[/device/...]:[/path/to/file.squashfs]
  squashtmpsize=[num. of bytes]
