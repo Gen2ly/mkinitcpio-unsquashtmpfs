@@ -3,7 +3,7 @@
 
 mount_handler_unsqaushtmpfs () {
 
-    local device device_mp squashrootpath unsquashtmp_mp
+    local device device_mp squashimgpath unsquashtmp_mp
 
     # Device existence test
     device="${squashimgpath%%:*}"
@@ -28,10 +28,10 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # SquashFS image existence test
-    squashrootpath="$device_mp"/"${squashimgpath##*:}"
-    if [ ! -f "$squashrootpath" ]; then
+    squashimgpath="$device_mp"/"${squashimgpath##*:}"
+    if [ ! -f "$squashimgpath" ]; then
         err  "SquashFS image not found: "$path"."
-        echo "squashimgpath= define correctly to continue."
+        echo "squashimgpath=/mnt/device/file.squashfs redefine."
         launch_interactive_shell
         msg  "Trying to continue..."
     fi
@@ -43,7 +43,8 @@ mount_handler_unsqaushtmpfs () {
         launch_interactive_shell
         msg  "Trying to continue..."
     fi
-    unsquashtmp_mp=/mnt/unsquashtmp
+    #unsquashtmp_mp=/mnt/unsquashtmp
+    unsquashtmp_mp=/new_root
     mkdir -p "$unsquashtmp_mp"
     if ! mount -t tmpfs tmpfs "$unsquashtmp_mp" \
          -o rw,size="$squashtmpsize",relatime
@@ -55,7 +56,7 @@ mount_handler_unsqaushtmpfs () {
     fi   
 
     # SquashFS image decompress
-    if ! unsquashfs -d "$unsquashtmp_mp" -f "$squashrootpath"; then
+    if ! unsquashfs -d "$unsquashtmp_mp" -f "$squashimgpath"; then
         err  "SquashFS decompression failed."
         echo "Does squashtmpsize= specify enough memory?"
         launch_interactive_shell
@@ -66,7 +67,11 @@ mount_handler_unsqaushtmpfs () {
 
 run_hook() {
 
+    umount "$device_mp"
     mount_handler=mount_handler_unsqaushtmpfs
+    #mount_handler () { mount_handler_unsquashtmpfs ; }
+    #umount /new_root
+    #mount -M /mnt/tmp /new_root
 
 }
 
