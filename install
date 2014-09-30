@@ -1,6 +1,7 @@
 #!/usr/bin/ash
 
 build() {
+    add_binary /usr/bin/eject
     add_binary /usr/bin/unsquashfs
     add_runscript
 }
