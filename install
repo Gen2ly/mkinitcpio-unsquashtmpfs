@@ -2,6 +2,7 @@
 
 build() {
     add_binary /usr/bin/unsquashfs
+    add_runscript
 }
 
 help() {
