@@ -3,7 +3,7 @@
 
 mount_handler_unsqaushtmpfs () {
 
-    local device devmnt pathtosquash tmpfsmnt
+    local device devmnt pathtosquash
 
     # Device existence test
     device="${squashimgpath%%:*}"
@@ -19,7 +19,7 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # Device mount
-    devmnt=/image_source
+    devmnt=/mnt/"${device##*/}"
     mkdir -p "$devmnt"
     if ! mount -o ro "$device" "$devmnt"; then
         err  "Mount error: "$device" to "$devmnt"."
@@ -39,27 +39,22 @@ mount_handler_unsqaushtmpfs () {
     # squashtmpsize= existence test
     if [ ! "$squashtmpsize" ]; then
         err  "squashtmpsize= not specified."
-        echo "Specify squashtmpsize= in bytes."
+        echo "Specify squashtmpsize= in # (bytes), or #M, or #G."
         launch_interactive_shell
         msg  "Trying to continue..."
     fi
 
     # Tmpfs create
-    #tmpfsmnt=/new_root
-    tmpfsmnt=/image
     [ ! -d "$tmpfsmnt" ] && mkdir -p "$tmpfsmnt"
-    if ! mount -t tmpfs tmpfs "$tmpfsmnt" \
-         -o rw,size="$squashtmpsize",relatime
-    then
+    if ! mount -t tmpfs tmpfs "$1" -o rw,size="$squashtmpsize",relatime; then
         err  "Tmpfs creation failed."
         echo "It may be possible the system does not have enough memory."
         launch_interactive_shell
         msg  "Trying to continue..."
     fi
-    chmod 0755 /image
 
     # SquashFS image decompress
-    if ! unsquashfs -d "$tmpfsmnt" -f "$pathtosquash"; then
+    if ! unsquashfs -d "$1" -f "$pathtosquash"; then
         err  "SquashFS decompression failed."
         echo "Does squashtmpsize= specify enough memory?"
         launch_interactive_shell
@@ -70,8 +65,8 @@ mount_handler_unsqaushtmpfs () {
 
 run_hook() {
 
-    umount "$devmnt"
     mount_handler=mount_handler_unsqaushtmpfs
+    umount "$devmnt"
     eject
 
 }
