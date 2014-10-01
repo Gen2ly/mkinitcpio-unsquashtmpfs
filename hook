@@ -19,9 +19,9 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # Device mount
-    devmnt=/mnt/${device##*/}
+    devmnt=/image_source
     mkdir -p "$devmnt"
-    if ! mount "$device" "$devmnt"; then
+    if ! mount -o ro "$device" "$devmnt"; then
         err  "Mount error: "$device" to "$devmnt"."
         launch_interactive_shell
         msg  "Trying to continue..."
@@ -45,7 +45,8 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # Tmpfs create
-    tmpfsmnt=/new_root
+    #tmpfsmnt=/new_root
+    tmpfsmnt=/image
     [ ! -d "$tmpfsmnt" ] && mkdir -p "$tmpfsmnt"
     if ! mount -t tmpfs tmpfs "$tmpfsmnt" \
          -o rw,size="$squashtmpsize",relatime
@@ -54,7 +55,8 @@ mount_handler_unsqaushtmpfs () {
         echo "It may be possible the system does not have enough memory."
         launch_interactive_shell
         msg  "Trying to continue..."
-    fi   
+    fi
+    chmod 0755 /image
 
     # SquashFS image decompress
     if ! unsquashfs -d "$tmpfsmnt" -f "$pathtosquash"; then
