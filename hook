@@ -45,7 +45,6 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # Tmpfs create
-    [ ! -d "$tmpfsmnt" ] && mkdir -p "$tmpfsmnt"
     if ! mount -t tmpfs tmpfs "$1" -o rw,size="$squashtmpsize",relatime; then
         err  "Tmpfs creation failed."
         echo "It may be possible the system does not have enough memory."
