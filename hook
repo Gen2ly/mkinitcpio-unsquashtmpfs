@@ -45,7 +45,7 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # Tmpfs create
-    if ! mount -t tmpfs tmpfs "$1" -o rw,size="$squashtmpsize",relatime; then
+    if ! mount -t tmpfs tmpfs -o rw,size="$squashtmpsize",relatime "$1"; then
         err  "Tmpfs creation failed."
         echo "It may be possible the system does not have enough memory."
         launch_interactive_shell
@@ -53,7 +53,7 @@ mount_handler_unsqaushtmpfs () {
     fi
 
     # SquashFS image decompress
-    if ! unsquashfs -d "$1" -f "$pathtosquash"; then
+    if ! unsquashfs -dest "$1" -force "$pathtosquash"; then
         err  "SquashFS decompression failed."
         echo "Does squashtmpsize= specify enough memory?"
         launch_interactive_shell
