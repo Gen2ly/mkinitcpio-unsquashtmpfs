@@ -65,8 +65,6 @@ mount_handler_unsqaushtmpfs () {
 run_hook() {
 
     mount_handler=mount_handler_unsqaushtmpfs
-    umount "$devmnt"
-    eject
 
 }
 
